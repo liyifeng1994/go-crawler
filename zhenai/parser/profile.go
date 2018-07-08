@@ -1,10 +1,11 @@
 package parser
 
 import (
-	"lyf/crawler/engine"
-	"lyf/crawler/model"
 	"regexp"
 	"strconv"
+
+	"lyf/crawler/engine"
+	"lyf/crawler/model"
 )
 
 var genderRe = regexp.MustCompile(`<td><span class="label">性别：</span><span field="">([^<]+)</span></td>`)

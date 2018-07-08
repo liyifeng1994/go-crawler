@@ -1,8 +1,9 @@
 package engine
 
 import (
-	"lyf/crawler/fetcher"
 	"log"
+
+	"lyf/crawler/fetcher"
 )
 
 type SimpleEngine struct{}

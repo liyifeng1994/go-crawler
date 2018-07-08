@@ -1,8 +1,9 @@
 package parser
 
 import (
-	"lyf/crawler/engine"
 	"regexp"
+
+	"lyf/crawler/engine"
 )
 
 var profileRe = regexp.MustCompile(`<a href="(http://album.zhenai.com/u/[0-9]+)"[^>]*>([^<]+)</a>`)

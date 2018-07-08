@@ -1,16 +1,17 @@
 package fetcher
 
 import (
-	"net/http"
-	"fmt"
-	"golang.org/x/text/transform"
-	"golang.org/x/text/encoding"
 	"bufio"
-	"golang.org/x/net/html/charset"
+	"fmt"
 	"io/ioutil"
-	"golang.org/x/text/encoding/unicode"
 	"log"
+	"net/http"
 	"time"
+
+	"golang.org/x/net/html/charset"
+	"golang.org/x/text/encoding"
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 var rateLimiter = time.Tick(10 * time.Millisecond)
