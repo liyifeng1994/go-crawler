@@ -3,7 +3,7 @@ package engine
 type ConcurrentEngine struct {
 	Scheduler   Scheduler
 	WorkerCount int
-	ItemSaver   chan interface{}
+	ItemSaver   chan Item
 }
 
 type Scheduler interface {
