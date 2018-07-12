@@ -40,14 +40,16 @@ func TestSave(t *testing.T) {
 		panic(err)
 	}
 
+	const index = "dating_test"
+
 	// Save expected item
-	err = save(excepted)
+	err = save(index, excepted)
 	if err != nil {
 		panic(err)
 	}
 
 	// Fetch save item
-	resp, err := client.Get().Index("dating_profile").Type(excepted.Type).Id(excepted.Id).Do(context.Background())
+	resp, err := client.Get().Index(index).Type(excepted.Type).Id(excepted.Id).Do(context.Background())
 	if err != nil {
 		panic(err)
 	}

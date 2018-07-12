@@ -3,7 +3,7 @@ package engine
 type ConcurrentEngine struct {
 	Scheduler   Scheduler
 	WorkerCount int
-	ItemSaver   chan Item
+	ItemChan    chan Item
 }
 
 type Scheduler interface {
@@ -36,7 +36,7 @@ func (e ConcurrentEngine) Run(seeds ...Request) {
 	for {
 		result := <-out
 		for _, item := range result.Items {
-			e.ItemSaver <- item
+			e.ItemChan <- item
 		}
 		for _, request := range result.Requests {
 			if isVisitedUrl(request.Url) {

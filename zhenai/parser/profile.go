@@ -53,13 +53,9 @@ func ParseProfile(contents []byte, url, name string) engine.ParseResult {
 
 	matchs := guessRe.FindAllSubmatch(contents, -1)
 	for _, m := range matchs {
-		url := string(m[1])
-		name := string(m[2])
 		result.Requests = append(result.Requests, engine.Request{
-			Url: url,
-			ParserFunc: func(c []byte) engine.ParseResult {
-				return ParseProfile(c, url, name)
-			},
+			Url:        string(m[1]),
+			ParserFunc: ProfileParser(string(m[2])),
 		})
 	}
 
@@ -80,4 +76,10 @@ func extractInt(contents []byte, re *regexp.Regexp) int {
 		return int
 	}
 	return 0
+}
+
+func ProfileParser(name string) func([]byte, string) engine.ParseResult {
+	return func(c []byte, url string) engine.ParseResult {
+		return ParseProfile(c, url, name)
+	}
 }
