@@ -3,8 +3,8 @@ package persistr
 import (
 	"context"
 	"log"
+	"errors"
 
-	"github.com/pkg/errors"
 	"gopkg.in/olivere/elastic.v5"
 
 	"lyf/crawler/engine"
