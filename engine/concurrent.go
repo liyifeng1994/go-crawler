@@ -36,7 +36,10 @@ func (e ConcurrentEngine) Run(seeds ...Request) {
 	for {
 		result := <-out
 		for _, item := range result.Items {
-			e.ItemChan <- item
+			//e.ItemChan <- item
+			go func(i Item) {
+				e.ItemChan <- i
+			}(item)
 		}
 		for _, request := range result.Requests {
 			if isDuplicate(request.Url) {
