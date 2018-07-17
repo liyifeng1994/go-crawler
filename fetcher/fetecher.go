@@ -18,7 +18,14 @@ var rateLimiter = time.Tick(10 * time.Millisecond)
 
 func Fetch(url string) ([]byte, error) {
 	<-rateLimiter
-	resp, err := http.Get(url)
+
+	request, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36")
+	resp, err := http.DefaultClient.Do(request)
+	//resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
