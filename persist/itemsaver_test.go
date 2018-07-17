@@ -8,7 +8,7 @@ import (
 	"lyf/crawler/engine"
 	"lyf/crawler/model"
 
-	"gopkg.in/olivere/elastic.v5"
+	"github.com/olivere/elastic"
 )
 
 func TestSave(t *testing.T) {
