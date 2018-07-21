@@ -5,10 +5,11 @@ import (
 	"lyf/crawler/persist"
 	"lyf/crawler/scheduler"
 	"lyf/crawler/zhenai/parser"
+	"lyf/crawler/config"
 )
 
 func main() {
-	itemChan, err := persistr.ItemSaver("dating_profile")
+	itemChan, err := persistr.ItemSaver(config.ElasticIndex)
 	if err != nil {
 		panic(err)
 	}
@@ -21,6 +22,6 @@ func main() {
 
 	e.Run(engine.Request{
 		Url:    "http://www.zhenai.com/zhenghun",
-		Parser: engine.NewFuncParser(parser.ParseCityList, "ParseCityList"),
+		Parser: engine.NewFuncParser(parser.ParseCityList, config.ParseCityList),
 	})
 }

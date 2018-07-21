@@ -13,6 +13,7 @@ import (
 	"lyf/crawler/engine"
 	"lyf/crawler/frontend/model"
 	"lyf/crawler/frontend/view"
+	"lyf/crawler/config"
 )
 
 type SearchResultHandler struct {
@@ -59,7 +60,7 @@ func (h SearchResultHandler) getSearchResult(q string, from int) (model.SearchRe
 	var result model.SearchResult
 	result.Query = q
 
-	resp, err := h.client.Search("dating_profile").
+	resp, err := h.client.Search(config.ElasticIndex).
 		Query(elastic.NewQueryStringQuery(rewriteQueryString(q))).From(from).Do(context.Background())
 	if err != nil {
 		return result, err

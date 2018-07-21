@@ -4,6 +4,7 @@ import (
 	"regexp"
 
 	"lyf/crawler/engine"
+	"lyf/crawler/config"
 )
 
 const cityListRe = `<a href="(http://www.zhenai.com/zhenghun/[0-9a-z]+)"[^>]*>([^<]+)</a>`
@@ -16,7 +17,7 @@ func ParseCityList(contents []byte, _ string) engine.ParseResult {
 	for _, m := range matches {
 		result.Requests = append(result.Requests, engine.Request{
 			Url:    string(m[1]),
-			Parser: engine.NewFuncParser(ParseCity, "ParseCity"),
+			Parser: engine.NewFuncParser(ParseCity, config.ParseCity),
 		})
 	}
 	return result

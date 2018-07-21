@@ -1,5 +1,7 @@
 package engine
 
+import "lyf/crawler/config"
+
 type ParserFunc func(contents []byte, url string) ParseResult
 
 type Parser interface {
@@ -31,7 +33,7 @@ func (NilParser) Parse(contents []byte, url string) ParseResult {
 }
 
 func (NilParser) Serialize() (name string, args interface{}) {
-	return "NilParser", 0
+	return config.NilParser, 0
 }
 
 type FuncParser struct {
