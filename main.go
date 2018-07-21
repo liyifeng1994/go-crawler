@@ -20,7 +20,7 @@ func main() {
 	}
 
 	e.Run(engine.Request{
-		Url:        "http://www.zhenai.com/zhenghun",
-		ParserFunc: parser.ParseCityList,
+		Url:    "http://www.zhenai.com/zhenghun",
+		Parser: engine.NewFuncParser(parser.ParseCityList, "ParseCityList"),
 	})
 }
