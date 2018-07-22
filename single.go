@@ -1,25 +1,24 @@
 package main
 
 import (
-	"fmt"
-
 	"lyf/crawler/engine"
 	"lyf/crawler/scheduler"
 	"lyf/crawler/zhenai/parser"
 	"lyf/crawler/config"
-	"lyf/crawler/persist/client"
+	"lyf/crawler/persist"
 )
 
 func main() {
-	itemChan, err := client.ItemSaver(fmt.Sprintf(":%d", config.ItemSaverPort))
+	itemChan, err := persistr.ItemSaver(config.ElasticIndex)
 	if err != nil {
 		panic(err)
 	}
 
 	e := engine.ConcurrentEngine{
-		Scheduler:   &scheduler.QueuedScheduler{},
-		WorkerCount: 100,
-		ItemChan:    itemChan,
+		Scheduler:        &scheduler.QueuedScheduler{},
+		WorkerCount:      100,
+		ItemChan:         itemChan,
+		RequestProcessor: engine.Worker,
 	}
 
 	e.Run(engine.Request{

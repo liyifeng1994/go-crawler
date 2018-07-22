@@ -12,6 +12,8 @@ const (
 
 	// RPC service method
 	ItemSaverRpc    = "ItemSaverService.Save"
+	CrawlServiceRpc = "CrawlService.Process"
 
 	ItemSaverPort = 1234
+	WorkerPort0   = 9000
 )
