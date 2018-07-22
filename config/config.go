@@ -14,4 +14,6 @@ const (
 	ItemSaverRpc    = "ItemSaverService.Save"
 	CrawlServiceRpc = "CrawlService.Process"
 
+	// Rate limiting
+	Qps = 20
 )
