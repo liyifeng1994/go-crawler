@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"errors"
 	"net/rpc"
@@ -13,15 +12,28 @@ import (
 	"lyf/crawler/rpcsupport"
 	itemsaver "lyf/crawler/persist/client"
 	worker "lyf/crawler/worker/client"
+	"flag"
+	"strings"
+)
+
+var (
+	itemSaverHost = flag.String(
+		"itemsaver_host", "", "itemsaver host")
+
+	workerHosts = flag.String(
+		"worker_hosts", "",
+		"worker hosts (comma separated)")
 )
 
 func main() {
-	itemChan, err := itemsaver.ItemSaver(fmt.Sprintf(":%d", config.ItemSaverPort))
+	flag.Parse()
+
+	itemChan, err := itemsaver.ItemSaver(*itemSaverHost)
 	if err != nil {
 		panic(err)
 	}
 
-	pool, err := createClientPool([]string{fmt.Sprintf(":%d", config.WorkerPort0)})
+	pool, err := createClientPool(strings.Split(*workerHosts, ","))
 
 	processor := worker.CreateProcessor(pool)
 
