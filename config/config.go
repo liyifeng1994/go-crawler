@@ -9,4 +9,9 @@ const (
 
 	// ElasticSearch
 	ElasticIndex = "dating_profile"
+
+	// RPC service method
+	ItemSaverRpc    = "ItemSaverService.Save"
+
+	ItemSaverPort = 1234
 )

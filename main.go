@@ -1,15 +1,17 @@
 package main
 
 import (
+	"fmt"
+
 	"lyf/crawler/engine"
-	"lyf/crawler/persist"
 	"lyf/crawler/scheduler"
 	"lyf/crawler/zhenai/parser"
 	"lyf/crawler/config"
+	"lyf/crawler/persist/client"
 )
 
 func main() {
-	itemChan, err := persistr.ItemSaver(config.ElasticIndex)
+	itemChan, err := client.ItemSaver(fmt.Sprintf(":%d", config.ItemSaverPort))
 	if err != nil {
 		panic(err)
 	}

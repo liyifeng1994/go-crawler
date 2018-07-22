@@ -15,7 +15,7 @@ func TestSave(t *testing.T) {
 	excepted := engine.Item{
 		Url:  "http://album.zhenai.com/u/1314495053",
 		Type: "zhenai",
-		Id:   "1314495053",
+		Id:   "13144950531",
 		Payload: model.Profile{
 			Name:       "风中的蒲公英",
 			Gender:     "女",
@@ -43,7 +43,7 @@ func TestSave(t *testing.T) {
 	const index = "dating_test"
 
 	// Save expected item
-	err = save(client, index, excepted)
+	err = Save(client, index, excepted)
 	if err != nil {
 		panic(err)
 	}
