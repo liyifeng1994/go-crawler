@@ -30,6 +30,9 @@ func main() {
 	}
 
 	pool, err := createClientPool(strings.Split(*workerHosts, ","))
+	if err != nil {
+		panic(err)
+	}
 
 	processor := worker.CreateProcessor(pool)
 
