@@ -17,12 +17,8 @@ import (
 )
 
 var (
-	itemSaverHost = flag.String(
-		"itemsaver_host", "", "itemsaver host")
-
-	workerHosts = flag.String(
-		"worker_hosts", "",
-		"worker hosts (comma separated)")
+	itemSaverHost = flag.String("itemsaver_host", "", "itemsaver host")
+	workerHosts   = flag.String("worker_hosts", "", "worker hosts (comma separated)")
 )
 
 func main() {
