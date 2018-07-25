@@ -16,11 +16,20 @@ import (
 	"lyf/crawler/config"
 )
 
-var rateLimiter = time.Tick(time.Second / config.Qps)
+var (
+	rateLimiter    = time.Tick(time.Second / config.Qps)
+	verboseLogging = false
+)
+
+func SetVerboseLogging() {
+	verboseLogging = true
+}
 
 func Fetch(url string) ([]byte, error) {
 	<-rateLimiter
-	log.Printf("Fetching url %s", url)
+	if verboseLogging {
+		log.Printf("Fetching url %s", url)
+	}
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
