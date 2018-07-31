@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>分布式事务实践-慕课网实战</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="renderer" content="webkit"><meta name="mobile-agent" content="format=wml"; url="https://coding.m.imooc.com/classindex.html?cid=237">
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="https://coding.m.imooc.com/classindex.html?cid=237">
+    <meta name="mobile-agent" content="format=xhtml"; url="https://coding.m.imooc.com/classindex.html?cid=237">
+    <meta name="mobile-agent" content="format=html5"; url="https://coding.m.imooc.com/classindex.html?cid=237">
+    <meta property="qc:admins" content="77103107776157736375" />
+    <meta property="wb:webmaster" content="c4f857219bfae3cb" />
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <meta http-equiv="Cache-Control" content="no-transform " />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="keywords" content="分布式事务实践" />
+    <meta name="description" content="本课程从本地事务出发，介绍了分布式系统和Spring cloud框架及其使用，以及分布式事务的几种实现模式。课程中还提供了大量的实例，让同学们在实战过程中，掌握分布式事务实现方式与思路" />
+
+    <link rel="stylesheet" href="//www.imooc.com/static/moco/v1.0/dist/css/moco.min.css?v=201807301014" type="text/css" />
+
+    <style type="text/css">
+        .moco-modal-info {
+            font-size: 14px;
+            line-height: 20px;
+        }
+    </style>
+
+
+
+
+
+
+    <link merge="false" rel="stylesheet" type='text/css' href="/static/module/class/content/css/237-less.css?v=201807301014" />
+
+    <script type="text/javascript">
+        var OP_CONFIG={"module":"class","page":"index","userout":0,"usercaution":"","userInfo":{"uid":1287267}};
+        OP_CONFIG.isLogin = 1;
+        var isLogin = 1;
+        var _msg_unread = 0;
+        var _not_unread = 0;
+        var _cartFlag = 0;
+        var seajsTimestamp="v=201807301014";
+    </script>
+
+
+    <link rel="stylesheet" href="//coding.imooc.com/static/module/??common/css/common-less.css,course/css/course-less.css,course/css/precon-less.css,class/common/css/index-less.css?v=1532930348" type="text/css" />
+</head>
+<body >
+
+<div id="header">
+    <div class="page-container" id="nav">
+        <div id="logo" class="logo"><a href="//www.imooc.com/" target="_self" class="hide-text" title="首页">慕课网</a></div>
+
+        <button type="button" class="navbar-toggle visible-xs-block js-show-menu" >
+            <i class="sz-list"></i>
+        </button>
+
+        <div class="g-menu-mini l">
+            <a href="javascript:;" class="menu-ctrl">
+                <i class="sz-list"></i>
+            </a>
+            <ul class="nav-item l">
+                <li class="set-btn visible-xs-block js-header-avator"><a href="//www.imooc.com/u/1287267/courses" target="_self"><img src='' /></a>
+                <li><a href="//www.imooc.com/course/list" target="_self">免费课程</a></li>
+                <li><a href="//class.imooc.com" target="_self">职业路径</a></li>
+                <li><a href="/" class="active" target="_self">实战</a></li>
+                <!--<li><a href="https://www.imooc.com/corp/index"   target="_self">分享</a></li>-->
+                <li><a href="//www.imooc.com/wenda" target="_self">猿问</a></li>
+                <li><a href="//www.imooc.com/article" target="_self">手记</a></li>
+                <li><a href="//job.imooc.com" class="program-nav" target="_self">找工作<i class="icn-new"></i></a></li>
+                <!--<li><a href="http://www.imooc.com/wiki" target="_self">WIKI</a></li>-->
+
+                <li class="visible-xs-block"><a href="//www.imooc.com/user/setprofile" target="_self">我的设置</a></li>
+                <li class="visible-xs-block"><a href="/passport/user/logout?referer=//coding.imooc.com" target="_self">退出</a></li>
+            </ul>
+        </div>
+        <div id="login-area">
+            <ul class="clearfix logined">
+                <li class="app-download" id="js-app-load">
+                    <a href="//www.imooc.com/mobile/app" target="_blank" style="width:60px;">下载APP</a>
+                    <div class="app-load-box clearfix js-load-box">
+                        <img src="//www.imooc.com/static/img/common/appload.png " class="l">
+                        <div class="r">
+                            <p>扫描下载慕课网APP</p>
+                            <a href="https://itunes.apple.com/cn/app/mu-ke-wang/id722179140?mt=8"><i class="imv2-ios"></i>App Store下载</a>
+                            <a href="//www.imooc.com/mobile/mukewang.apk"><i class="imv2-android"></i>Android下载</a>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="shop-cart" id="shop-cart">
+                    <a href="//order.imooc.com/pay/cart" class="shop-cart-icon" target="_blank">
+                        <span class="sz-shopping-cart  js-endcart"></span><span>购物车</span><span class="shopping_icon js-cart-num" style='display: none' data-ordernum="0" data-cartnum="0">0</span>
+                    </a>
+                    <div class="my-cart" id="js-my-cart"></div>
+                </li>
+                <li class='remind_warp'>
+                    <i class="msg_remind"></i>
+                    <a target="_blank" href='//www.imooc.com/u/1287267/notices'>
+                        <i class='sz-notifi'></i>
+                    </a>
+                </li>
+                <li class="set_btn user-card-box" id="header-user-card">
+                    <a id="header-avator" class="user-card-item js-header-avator" action-type="my_menu"  href="//www.imooc.com/u/1287267/courses" target="_self">
+                        <img width="40" height="40">
+                        <i class="myspace_remind" style="display: none;"></i>
+                        <span style="display: none;">动态提醒</span>
+                    </a>
+
+                    <div class="g-user-card"></div>
+
+                </li>
+            </ul>
+        </div>
+        <div class='search-warp clearfix' style='min-width: 32px;'>
+
+            <div class="pa searchTags js-searchtags" ></div>
+
+            <div class="search-area" data-search="top-banner">
+                <input class="search-input" data-suggest-trigger="suggest-trigger" placeholder="请输入想搜索的内容..." type="text" autocomplete="off">
+                <input type='hidden' class='btn_search' data-search-btn="search-btn" />
+                <ul class="search-area-result" data-suggest-result="suggest-result">
+                </ul>
+            </div>
+            <div class='showhide-search' data-show='no'><i class='sz-search'></i></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="course-class-infos ">
+    <div class="w pr">
+
+        <div class="path">
+            <a href="/">实战</a>
+            <i class="path-split">\</i><span>分布式事务实践 解决数据一致性</span>
+        </div>
+
+        <div class="extra">
+
+            <div class='course-collect clearfix js-course-collect l' data-type='0' data-cid='237'>
+                <i class='imv2-star j'></i><span>收藏</span>
+            </div>
+
+            <div class="share-action l bdsharebuttonbox bdshare-button-style0-16" data-bd-bind="1439263858135">
+                <a href="javascript:;" class="share wx js-share sz-weixin" data-cmd="weixin" title="分享到微信">
+                </a>
+                <a href="javascript:;" class="share qq js-share sz-qq" data-cmd="qzone" title="分享到QQ空间">
+                </a>
+
+                <a href="javascript:;" class="share sina js-share sz-weibo" data-cmd="tsina" title="分享到新浪微博">
+                </a>
+            </div>
+        </div>
+        <div class='info-warp tc'>
+            <div class="title-box ">
+                <h1>分布式事务实践</h1>
+                <h2>掌握多种分布式事务的实现方式，架构师必备技能</h2>
+            </div>
+            <div class="splitline"></div>
+
+            <div class='hide'>
+                <h1 class="l">分布式事务实践 解决数据一致性</h1>
+            </div>
+
+
+            <div class='info-bar tc'>
+                <div class="statics clearfix">
+                    <div class="static-item first">
+                        <span class="meta">难度</span>
+                        <span class="meta-value"><strong>高级</strong></span>
+                        <em>&#183;</em>
+                    </div>
+                    <div class="static-item static-time">
+                        <span class="meta">时长</span>
+                        <span class="meta-value"><strong>14小时</strong></span>
+                        <em>&#183;</em>
+                    </div>
+                    <div class="static-item">
+                        <span class="meta">学习人数</span>
+                        <span class="meta-value"><strong>195</strong></span>
+                        <em>&#183;</em>
+                    </div>
+                    <div class="static-item">
+                        <span class="meta">综合评分</span>
+                        <span class="meta-value"><strong>9.75分</strong></span>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="price-box">
+				<span class="num clearfix">
+															
+										<span class="discount-price">
+						<span class="baseline baseline-y">
+						<span class="new-y">&yen;</span>
+						<span class="cur-price"><b>348</b><b class="sub">.00</b></span>
+						</span>
+					</span>
+										
+				</span>
+
+            </div>
+
+            <div class="clearfix btnwarp">
+                <a href="javascript:;" class="js-buy-trigger buy-class-btn class-btn1 buynow-btn" data-cid="237" data-pay="0" id="buy-trigger">
+                    <span>立即购买</span>
+                </a>
+
+                <a href='javascript:;' class='js-addcart addcart' data-cid='237' data-type='1'>
+                    <em class="line"></em>
+                    <i class='sz-shopping-cart'></i>
+                </a>
+
+                <div class="preview-tip">
+                </div>
+            </div>
+
+            <div class="adjustment-intro-box">
+                <span class="hb-tips"><i class="hb-tips-icon"></i><a href="//coding.imooc.com/user/faqdetail?column_id=2&amp;id=20" target="_blank"><span class="hb-tips-txt">支持支付宝花呗分期</span></a></span>
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <div class="info-bg" id="js-info-bg">
+        <div class="cover-img-wrap" style="background-image:url(//img.mukewang.com/szimg/5b508c770001e17620000560.jpg)"></div>
+    </div>
+</div>
+
+<div class='course-infos-t'>
+    <div id='Anchor'></div>
+    <div class="comp-tab-t js-comp-tab">
+        <ul class='clearfix'>
+            <li class="comp-tab-item-first comp-tab-item ">
+                <a href="/class/237.html#Anchor">课程介绍</a>
+                <div class="borderLine"></div>		</li>
+            <li class="comp-tab-item">
+                <a href="/class/package/237.html#Anchor">组合套餐</a>
+
+            </li>
+            <li class="comp-tab-item ">
+                <a href="/class/chapter/237.html#Anchor">课程章节</a>
+            </li>
+            <li class="comp-tab-item">
+                <a href="/class/237.html#Prchor">售前咨询</a>
+                <span>0</span>
+
+            </li>
+            <li class="comp-tab-item ">
+                <a href="/class/evaluation/237.html#Anchor">用户评价</a>
+                <span>8</span>
+            </li>
+
+            <li class="comp-tab-item ">
+                <a href="/class/237.html#Envir">环境参数</a>
+
+            </li>
+            <li class="comp-tab-item ">
+                <a href="/class/log/237.html#Log">更新日志</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class='js-fixed course-fixed-nav hide'>
+        <h3 class='fixed-course-name' title='分布式事务实践 解决数据一致性'>分布式事务实践 解决数据一致性</h3>
+
+        <ul class='fixed-nav clearfix'>
+            <li class="fixed-nav-item-first fixed-nav-item ml0 active">
+                <a href="/class/237.html#Anchor">课程介绍</a>
+            </li>
+            <li class="fixed-nav-item ">
+                <a href="/class/package/237.html#Anchor">组合套餐</a>
+            </li>
+            <li class="fixed-nav-item ">
+                <a href="/class/chapter/237.html#Anchor">课程章节</a>
+            </li>
+            <li class="fixed-nav-item">
+                <a href="/class/237.html#Prchor">售前咨询</a>
+                <span>0</span>
+            </li>
+            <li class="fixed-nav-item ">
+                <a href="/class/evaluation/237.html#Anchor">用户评价</a>
+                <span>8</span>
+            </li>
+
+            <li class="fixed-nav-item ">
+                <a href="/class/237.html#Envir">环境参数</a>
+            </li>
+
+            <li class="fixed-nav-item ">
+                <a href="/class/log/237.html#Log">更新日志</a>
+            </li>
+        </ul>
+
+        <div class="goumai">
+            <div class="buy-wrap r">
+                <a href="javascript:;" class="js-buy-trigger fixed-nav-btn fixed-btn1" data-cid="237" data-pay="0" id="buy-trigger">
+                    <span>立即购买</span>
+                </a>
+                <a href='javascript:;' class='js-addcart addcart' data-cid='237' data-type='1'>
+                    <span class='line'></span>
+                    <i class='sz-add-shopping-cart'></i>
+                </a>
+            </div>
+            <span class="r fixed-nav-prices">￥348.00</span>
+
+        </div>
+    </div>
+
+
+    <div class="info-video clearfix" style="background-image: url(//img.mukewang.com/szimg/5b2a29eb000103e809000500.jpg);">
+        <div class="video-dark-box l clearfix" style="display: block">
+            <div class="js-video-btn videoBtn l">
+                <div><i class="sz-play"></i></div>
+                <p>观看导学视频</p>
+            </div>
+            <div id="videoInfo" class="l">
+                <div id="content">
+                    <div class="con">
+                        <div class='info-name'>分布式事务实践 解决数据一致性</div>
+                        <div class='info-desc'>基于微服务架构的分布式系统应用越来越多，而分布式系统下的事务，一直没有一个简单统一的实现方案。本课程从本地事务出发，介绍了分布式系统和Spring cloud框架及其使用，以及分布式事务的几种实现模式。课程中还提供了大量的实例，让同学们在实战过程中，掌握分布式事务实现方式与思路。
+                        </div>
+
+                    </div>
+
+                    <div class="line"></div>
+                </div>
+
+            </div>
+        </div>
+        <div class="detail-white-box l" style="display: none;">
+
+            <div class="scrollConTeacher">
+
+                <div class="detailContent">
+                    <div class="nickname">大漠风</div>
+                    <div class="jobType">技术总监</div>
+                    <div class="introduce" data-text="&lt;p&gt;15年的开发经验，目前在一家创业公司担任技术总监，熟悉java、python、前端开发等，有丰富的架构设计、开发经验。喜欢clojure，爱好足球，最近在研究用python做基于机器学习的量化投资。&lt;/p&gt;
+">
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="teacher-right-box r">
+            <div class="teacher">
+                <div class="whiteBorder"></div>
+                <a href="http://www.imooc.com/u/1315488" target="_blank">
+                    <div class='headPortrait'>
+                        <img src="//img.mukewang.com/user/5b1e461a000140a007570649-100-100.jpg">
+                    </div>
+                    <div class='nickname'>大漠风</div>
+                </a>
+                <p>技术总监</p>
+            </div>
+            <div class="jiao" style="display: none;"></div>
+
+        </div>
+
+        <div class="comp-tabs-pannel video-container" style='display: none;' data-purl="//img.mukewang.com/szimg/5b2a29eb000103e809000500.jpg" data-vurl="//v3.mukewang.com/shizhan/5b2a1f4fe520e5f0088b45cf/H.mp4" id="js-video-content">
+            <!-- <div class="desc-short"> -->
+            <div class="video-wrap">
+                <div class="video-container" id="video-container"></div>
+            </div>
+
+            <!-- </div> -->
+
+            <div class="video-mask"></div>
+            <div id="js-video-close" class="video-close imv2-close"></div>
+        </div>
+    </div>
+    <!-- <div id="js-index-video" class="video-container">
+         <div class="video-wrap" id="js-video-wrap" data-url="//v3.mukewang.com/shizhan/5b2a1f4fe520e5f0088b45cf/H.mp4">
+
+          </div>
+          <div class="video-mask"></div>
+          <div id="js-video-close" class="video-close imv2-close"></div>
+    </div> -->
+</div>
+
+
+<div class="infolayout clearfix">
+
+
+    <div class="appendtemplate">
+        <!--ES_BEGIN-->
+        <div class="introduce-content">
+            <div class="section1">
+                <div class="wrap">
+                    <h2>典型场景，两种微服务架构下的分布式事务</h2>
+                    <h5>由用户、票务、订单3个服务共同完成购票业务请求的经典场景</h5>
+                    <div class="content-box clearfix">
+                        <div class="box-item">
+                            <img src="/static/module/class/content/img/237/section1-1.png">
+                            <p>Spring Cloud</p>
+                        </div>
+                        <div class="box-item">
+                            <img src="/static/module/class/content/img/237/section1-2.png">
+                            <p>Event Sourcing（Axon）</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section2">
+                <div class="wrap">
+                    <h2>不惧挑战，攻克分布式系统数据一致性难题</h2>
+                    <img src="/static/module/class/content/img/237/section2-1.png">
+                </div>
+            </div>
+            <div class="section3">
+                <div class="wrap">
+                    <h2>从头开始，系统讲解分布式事务来龙去脉</h2>
+                    <h5>从原理到实例，让你对事务机制了然于心</h5>
+                    <div class="content-box clearfix">
+                        <div class="box-item">
+                            <span>事务</span>
+                            <p>
+                                事务原则、实现原理<br>
+                                事务特性：ACID<br>
+                                业务实例<br>
+                                数据库事务的实现原理<br>
+                                JDBC实现事务的原理
+                            </p>
+                        </div>
+                        <div class="box-item">
+                            <span>Spring<br>事务</span>
+                            <p>
+                                实例代码分析：标签形式、代码形式<br>
+                                Spring事务抽象<br>
+                                4种实现: JDBC、JPA、JMS、JTA等<br>
+                                Spring本地事务<br>
+                                XA规范与两阶段提交<br>
+                                Spring外部事物，JTA<br>
+                                外部事务解决的问题：多数据源
+                            </p>
+                            <img src="/static/module/class/content/img/237/section3-1.png">
+                        </div>
+                        <div class="box-item">
+                            <span>分布式<br>系统</span>
+                            <p>
+                                分布式系统的定义<br>
+                                分布式系统的CAP原则<br>
+                                原则实现<br>
+                                数据的一致性<br>
+                                SOA架构、微服务架构<br>
+                                Spring Cloud微服务系统实例
+                            </p>
+                            <img src="/static/module/class/content/img/237/section3-1.png">
+                        </div>
+                        <div class="box-item">
+                            <span>分布式<br>事务</span>
+                            <p>
+                                分布式事务定义、原则、实现原则<br>
+                                分布式事务的ACID、实现原则<br>
+                                XA规范与两阶段提交的原理、实现<br>
+                                Spring分布式事务管理实例<br>
+                                JTA、事务同步、链式事务<br>
+                                微服务系统中分布式事务实现的几种模式
+                            </p>
+                            <img src="/static/module/class/content/img/237/section3-1.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section4">
+                <div class="wrap">
+                    <h2>丰富实例，掌握分布式事务多种实现方式</h2>
+                    <div class="content-box clearfix">
+                        <img src="/static/module/class/content/img/237/section4-1.png" class="img-left">
+                        <div class="content-right">
+                            <div class="box-item clearfix">
+                                <img src="/static/module/class/content/img/237/section4-2.png">
+                                <p>spring事务同步机制</p>
+                            </div>
+                            <div class="box-item clearfix">
+                                <img src="/static/module/class/content/img/237/section4-2.png">
+                                <p>消息驱动模式</p>
+                            </div>
+                            <div class="box-item clearfix">
+                                <img src="/static/module/class/content/img/237/section4-2.png">
+                                <p>事件溯源模式</p>
+                            </div>
+                            <div class="box-item clearfix">
+                                <img src="/static/module/class/content/img/237/section4-2.png">
+                                <p>TCC模式</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section5">
+                <div class="wrap">
+                    <h2>学员专享增值服务</h2>
+                    <div class="content-box clearfix">
+                        <div class="box-item">
+                            <i></i>
+                            <div class="smalle-title">问答专区</div>
+                            <p>关于课程的问题都可在问答区随时提问，讲</p>
+                            <p>师会进行集中答疑</p>
+                        </div>
+                        <div class="box-item">
+                            <i></i>
+                            <div class="smalle-title">源码开放</div>
+                            <p>课程案例代码完全开放给你，你可以根据</p>
+                            <p>所学知识自行修改、优化</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section6">
+                <div class="wrap">
+                    <div class="content-box clearfix">
+                        <div class="context-box">
+                            <h2>适合人群</h2>
+                            <p>
+                                中级Java开发者，致力于向架构师发展的有志青年
+                            </p>
+                        </div>
+                        <div class="context-box">
+                            <h2>技术储备要求</h2>
+                            <p>
+                                Java Web开发基础，Spring框架基础，事务的基本概念<br>
+                                了解分布式系统基本概念
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--ES_END-->
+    </div>
+
+
+    <div class="envir-box" id="Envir">
+        <h1>环境参数</h1>
+        <div class="detail-box">
+            <ul class="clearfix">
+                <li class="l ">
+                    <span class="detail-tag">主要框架</span>
+                    <i class="triangle"></i>
+                    <span class="detail">SpringBoot（1.5.10.RELREASE） </span>
+                </li>
+                <li class="l ">
+                    <span class="detail-tag">Cloud</span>
+                    <i class="triangle"></i>
+                    <span class="detail">SpringCloud（Edgware.SR2）</span>
+                </li>
+                <li class="l ">
+                    <span class="detail-tag">Axon</span>
+                    <i class="triangle"></i>
+                    <span class="detail">3.2</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="preconsultation" id="Prchor">
+        <div class="w question-input">
+            <input type="text" placeholder="输入你的课程咨询问题" class="input-block js-inputcont" data-can-search="true" data-pagesize="6">
+            <div class="question-btn js-question-btn" data-cid="237">提问</div>
+        </div>
+        <div class="w question-contain js-load-prelist" data-cid="237">
+            <div class="comp-loading">
+                <i class="sz-loading"></i>
+                <span class="text">数据加载中...</span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="w shizhan-recommendcourse js-recom-course" data-id="237">
+
+    </div>
+
+
+    <div class="w info-recommendcourse js-prelearn" data-id="237">
+    </div>
+
+
+</div>
+
+
+
+
+
+<div id="footer">
+    <div class="waper">
+        <div class="footerwaper clearfix">
+            <div class="followus r">
+                <a class="followus-weixin" href="javascript:;"  target="_blank" title="微信">
+                    <div class="flw-weixin-box"></div>
+                </a>
+                <a class="followus-weibo" href="http://weibo.com/u/3306361973"  target="_blank" title="新浪微博"></a>
+                <a class="followus-qzone" href="http://user.qzone.qq.com/1059809142/" target="_blank" title="QQ空间"></a>
+            </div>
+            <div class="footer_intro l">
+                <div class="footer_link">
+                    <ul>
+                        <li><a href="//www.imooc.com/" target="_blank">网站首页</a></li>
+                        <li><a href="//www.imooc.com/about/cooperate" target="_blank" title="企业合作">企业合作</a></li>
+                        <li><a href="//www.imooc.com/about/job" target="_blank">人才招聘</a></li>
+                        <li> <a href="//www.imooc.com/about/contact" target="_blank">联系我们</a></li>
+                        <li> <a href="//www.imooc.com/about/recruit" target="_blank">讲师招募</a></li>
+                        <li> <a href="//coding.imooc.com/user/faq" target="_blank">常见问题</a></li>
+                        <li> <a href="//www.imooc.com/user/feedback?coding" target="_blank">意见反馈</a></li>
+                        <li><a href="http://daxue.imooc.com/" target="_blank">慕课大学</a></li>
+                        <li> <a href="//www.imooc.com/about/friendly" target="_blank">友情链接</a></li>
+                        <!-- <li><a href="http://www.imooc.com/about/us" target="_blank">关于我们</a></li> -->
+                    </ul>
+                </div>
+                <p>Copyright © 2018 imooc.com All Rights Reserved | 京ICP备 12003892号-11</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 新人有礼入口 -->
+<a class="newcomer hide" href="//www.imooc.com/act/newcomer" target="_blank">
+    <i class="js-close imv2-close"></i>
+</a>
+
+<div id="J_GotoTop" class="elevator">
+
+    <a href="//www.imooc.com/user/feedback?coding" class="elevator-msg"  target="_blank" >
+        <i class="sz-feedback"></i>
+        <span class="">意见反馈</span>
+    </a>
+    <a href="/user/faq" class="elevator-faq"  target="_blank" >
+        <i class="sz-help_outline"></i>
+        <span class="">常见问题</span>
+    </a>
+    <a href="//www.imooc.com/mobile/app" target="_blank" class="elevator-app" >
+        <i class="sz-appdownload"></i>
+        <span class="">APP下载</span>
+        <div class="elevator-app-box"></div>
+    </a>
+    <a href="javascript:void(0)" class="elevator-weixin no-goto" id="js-elevator-weixin" >
+        <i class="sz-weixigzh"></i>
+        <span class="">官方微信</span>
+        <div class="elevator-weixin-box"></div>
+    </a>
+    <a href="javascript:void(0)" class="elevator-top no-goto" style="display:none" id="backTop">
+        <i class="sz-arrow-up"></i>
+        <span class="">返回顶部</span>
+    </a>
+</div>
+
+
+
+
+<script type="text/javascript" src="//moco.imooc.com/static/monitor/error.js"></script>
+<script src="/passport/static/scripts/ssologin.js?v=2.0"></script>
+<script type="text/javascript" src="/static/module/common/js/common.js?v=201807301014"></script>
+<script type="text/javascript" src="//www.imooc.com/static/moco/v1.0/dist/js/moco.min.js"></script>
+
+
+
+
+
+
+<script src='/static/lib/jquery-fly/jquery.fly.js'></script>
+<!--[if gte IE 9]><script src='/static/lib/jquery-fly/requestAnimationFrame.js'></script><![endif]-->
+<script src='/static/lib/jquery-qrcode/qrcode.js'></script>
+<script data-entry="class/index">
+    requirejs(['class/index'], function(){});
+    (function(){
+        var imgPic = '//img.mukewang.com/szimg/5b2a29d50001bf4605400300-280-160.jpg' || 'https://www.imooc.com/static/img/index/logo_new.png',
+                text = '我正在参加@慕课网 的一门课程【' + '分布式事务实践 解决数据一致性' + '】，很不错哦！快来一起学习吧！', //节名称
+                url = 'https://coding.imooc.com' + window.location.pathname;
+
+        window._bd_share_config = {
+            "common": {
+                "bdUrl": url,
+                "bdSnsKey": {
+                    'tsina':'2788596354'
+                },
+                "bdText": text,
+                "bdMini": "2",
+                "bdMiniList": false,
+                "bdPic": imgPic,
+                "bdStyle": "0",
+                "bdSize": "16"
+            },
+            "share": {}
+        };
+        with(document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/static/lib/baiduShare/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];
+    })();
+</script>
+
+
+<div class="comp-modal-overlay"></div>
+<div class="modal modal-buy" id="before-buy-modal">
+    <div class="inner">
+        <div class="header">
+            <strong class="tit">购买课程</strong>
+            <a href="javascript:;" class="help">帮助？</a>
+        </div>
+        <div class="content">
+            <div class="infos">
+                <span class="name">分布式事务实践 解决数据一致性</span>
+                <span class="price">
+																	<i>&yen;</i><b>348</b><i>.00</i>
+								</span>
+                <span class="deadline">
+					
+					                </span>
+            </div>
+        </div>
+        <div class="footer">
+            <a href="javascript:;" class="cancel-btn" rel="modal:close">取消</a>
+            <a data-href="/pay/buynow/cid/237" href='javascript:;' class="go-pay-btn">去支付</a>
+        </div>
+    </div>
+</div>
+
+<div style="display: none">
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?c1c5f01e0fc4d75fd5cbb16f2e713d56";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+</div>
+
+</body>
+</html>
