@@ -17,6 +17,6 @@ type Item struct {
 	Payload interface{}
 }
 
-func NilParser([]byte) ParseResult {
+func NilParser() ParseResult {
 	return ParseResult{}
 }
