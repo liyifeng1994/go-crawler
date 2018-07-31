@@ -48,7 +48,7 @@ func Fetch(url string) ([]byte, error) {
 
 	bodyReader := bufio.NewReader(resp.Body)
 	e := determineEncoding(bodyReader)
-	utf8Reader := transform.NewReader(resp.Body, e.NewDecoder())
+	utf8Reader := transform.NewReader(bodyReader, e.NewDecoder())
 	return ioutil.ReadAll(utf8Reader)
 }
 
