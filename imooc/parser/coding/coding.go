@@ -1,7 +1,6 @@
 package coding
 
 import (
-	"fmt"
 	"regexp"
 
 	. "lyf/crawler/util"
@@ -11,10 +10,10 @@ import (
 
 var idUrlRe = regexp.MustCompile(`https://coding.imooc.com/class/([\d]+).html`)
 var titleRe = regexp.MustCompile(`<h3 class='fixed-course-name' title='([^']+)'>`)
-var originalTitleRe = regexp.MustCompile(`<title>([^-]+)-慕课网实战[课程]*</title>`)
+var originalTitleRe = regexp.MustCompile(`<title>([^-]+)-慕课网[实战]*[课程]*</title>`)
 var teacherRe = regexp.MustCompile(`<div class="nickname">([^<]+)</div>`)
 var levelRe = regexp.MustCompile(`<span class="meta-value"><strong>([初|中|高]级)</strong></span>`)
-var timeRe = regexp.MustCompile(`<span class="meta-value"><strong>([\d]+)小时</strong></span>`)
+var timeRe = regexp.MustCompile(`<span class="meta-value"><strong>[ ]*([\d]+小时[^<]*)</strong></span>`)
 var studentsNumberRe = regexp.MustCompile(`<span class="meta-value"><strong>([\d]+)</strong></span>`)
 var scoreRe = regexp.MustCompile(`<span class="meta-value"><strong>([^分]+)分</strong></span>`)
 var priceRe = regexp.MustCompile(`<span class="r fixed-nav-prices">￥([^<]+)</span>`)
@@ -26,7 +25,7 @@ func ParseCoding(contents []byte, url string) engine.ParseResult {
 		OriginalTitle:  ExtractString(contents, originalTitleRe),
 		Teacher:        ExtractString(contents, teacherRe),
 		Level:          ExtractString(contents, levelRe),
-		Time:           fmt.Sprintf("%d小时", ExtractInt(contents, timeRe)),
+		Time:           ExtractString(contents, timeRe),
 		StudentsNumber: ExtractInt(contents, studentsNumberRe),
 		Score:          ExtractFloat(contents, scoreRe),
 		Price:          ExtractFloat(contents, priceRe),
